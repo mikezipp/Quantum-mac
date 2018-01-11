@@ -1,50 +1,72 @@
+from datetime import datetime
+import csv
+
+
 selected_dict = {}
 
+security_list = []
+management_list = []
+device_list = []
 
 
-def BULK_MAC(type):
-
-   mac = raw_input("Input one mac address [xx:xx:xx:xx:xx:xx] per line, end with an extra newline: ")
-
-   while mac is not "":
-      selected_dict.update({mac:type})
-      mac = raw_input("Input one mac address per line, end with an extra newline: ")
-
-   print "\nHere are your entries: %s \nNext, login to netscripts(quantum) and paste in the lines below:\n" % (selected_dict)
-
-   for key, val in selected_dict.iteritems():
-      print "endpoint-update -m %s -s %s" % (key, val)
+tacacspw = raw_input("Enter your TACACS password\n>")
 
 
+def EXPORT_TO_QUANTUM(zone):
 
-def MAIN():
+   if zone == security_list:
+      print "\n\nlogin to netscripts and paste in the lines below for Security Additions:"
+      for mac in security_list:
+         print "endpoint-update -m %s -s SECURITY" % (mac)
+         print tacacspw
 
-   bulk_type = raw_input("\n\nWelcome!\nWhat would you like to do?\n\n1 - SPECIFY TYPE TO CREATE BULK ENTRIES\n2 - EXIT PROGRAM\n\n>")
+   if zone == management_list:
+      print "\n\nlogin to netscripts and paste in the lines below for Management Additions:"
+      for mac in management_list:
+         print "endpoint-update -m %s -s MANAGEMENT-NETWORK" % (mac)
+         print tacacspw
 
-   if bulk_type == "1":
-      print "\nYou selected BULK ENTRY\n"
-      bulk_type_vlan = raw_input("WHAT ZONE WILL THESE DEVICES LIVE IN?:\n1 - SECURITY\n2 - MANAGEMENT-NETWORK\n3 - DEVICE\n> ")
-
-      if bulk_type_vlan == "1":
-         print "SECURITY"
-         BULK_MAC("SECURITY")
-
-      if bulk_type_vlan == "2":
-         print "MANAGEMENT-NETWORK"
-         BULK_MAC("MANAGEMENT-NETWORK")
-
-      if bulk_type_vlan == "3":
-         print "DEVICE"
-         BULK_MAC("DEVICE")
-
-   if bulk_type == "2":
-      print "You selected EXIT"
-
-MAIN()
+   if zone == device_list:
+      print "\n\nlogin to netscripts and paste in the lines below for Device Additions:"
+      for mac in device_list:
+         print "endpoint-update -m %s -s DEVICE" % (mac)
+         print tacacspw
 
 
+def IMPORT_CSV():
 
+   with open("mac-address.tsv") as tsvfile:
+      reader = csv.reader(tsvfile, delimiter='\t')
+      for row in reader:
+         security_list.append(row[0])
+         management_list.append(row[1])
+         device_list.append(row[2])
 
+   #CLEAN LISTS
+   for mac in security_list:
+      if mac == "SECURITY":
+         security_list.remove(mac)
+      if mac == '':
+         security_list.remove(mac)
+   if len(security_list) > 1:
+      EXPORT_TO_QUANTUM(security_list)
 
+   for mac in management_list:
+      if mac == "MANAGEMENT-NETWORK":
+         management_list.remove(mac)
+      if mac == '':
+         management_list.remove(mac)
+   if len(management_list) > 1:
+      EXPORT_TO_QUANTUM(management_list)
+
+   for mac in device_list:
+      if mac == "DEVICE":
+         device_list.remove(mac)
+      if mac == '':
+         device_list.remove(mac)
+   if len(device_list) > 1:
+      EXPORT_TO_QUANTUM(device_list)
+
+IMPORT_CSV()
 
 
