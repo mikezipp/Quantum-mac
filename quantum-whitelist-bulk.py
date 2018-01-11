@@ -9,7 +9,7 @@ management_list = []
 device_list = []
 
 
-tacacspw = raw_input("Enter your TACACS password\n>")
+#tacacspw = raw_input("Enter your TACACS password\n>")
 
 
 def EXPORT_TO_QUANTUM(zone):
@@ -18,19 +18,19 @@ def EXPORT_TO_QUANTUM(zone):
       print "\n\nlogin to netscripts and paste in the lines below for Security Additions:"
       for mac in security_list:
          print "endpoint-update -m %s -s SECURITY" % (mac)
-         print tacacspw
+ #        print tacacspw
 
    if zone == management_list:
       print "\n\nlogin to netscripts and paste in the lines below for Management Additions:"
       for mac in management_list:
          print "endpoint-update -m %s -s MANAGEMENT-NETWORK" % (mac)
-         print tacacspw
+#         print tacacspw
 
    if zone == device_list:
       print "\n\nlogin to netscripts and paste in the lines below for Device Additions:"
       for mac in device_list:
          print "endpoint-update -m %s -s DEVICE" % (mac)
-         print tacacspw
+#         print tacacspw
 
 
 def IMPORT_CSV():
