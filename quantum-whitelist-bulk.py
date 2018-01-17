@@ -7,9 +7,8 @@ selected_dict = {}
 security_list = []
 management_list = []
 device_list = []
+wap_list = []
 
-
-#tacacspw = raw_input("Enter your TACACS password\n>")
 
 
 def EXPORT_TO_QUANTUM(zone):
@@ -18,19 +17,22 @@ def EXPORT_TO_QUANTUM(zone):
       print "\n\nlogin to netscripts and paste in the lines below for Security Additions:"
       for mac in security_list:
          print "endpoint-update -m %s -s SECURITY" % (mac)
- #        print tacacspw
 
    if zone == management_list:
       print "\n\nlogin to netscripts and paste in the lines below for Management Additions:"
       for mac in management_list:
          print "endpoint-update -m %s -s MANAGEMENT-NETWORK" % (mac)
-#         print tacacspw
 
    if zone == device_list:
       print "\n\nlogin to netscripts and paste in the lines below for Device Additions:"
       for mac in device_list:
          print "endpoint-update -m %s -s DEVICE" % (mac)
-#         print tacacspw
+
+   if zone == wap_list:
+      print "\n\nlogin to netscripts and paste in the lines below for WAP Additions:"
+      for mac in wap_list:
+         print "endpoint-update -m %s -s WAP" % (mac)
+
 
 
 def IMPORT_CSV():
@@ -41,6 +43,7 @@ def IMPORT_CSV():
          security_list.append(row[0])
          management_list.append(row[1])
          device_list.append(row[2])
+         wap_list.append(row[3])
 
    #CLEAN LISTS
    for mac in security_list:
@@ -66,6 +69,14 @@ def IMPORT_CSV():
          device_list.remove(mac)
    if len(device_list) > 1:
       EXPORT_TO_QUANTUM(device_list)
+
+   for mac in wap_list:
+      if mac == "WAP":
+         wap_list.remove(mac)
+      if mac == '':
+         wap_list.remove(mac)
+   if len(device_list) > 1:
+      EXPORT_TO_QUANTUM(wap_list)
 
 IMPORT_CSV()
 
